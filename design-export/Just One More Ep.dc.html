@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="stylesheet" href="_ds/organic-9ff93f80-ec70-441a-8d2d-0176603807b6/styles.css">
+  <script src="_ds/organic-9ff93f80-ec70-441a-8d2d-0176603807b6/_ds_bundle.js"></script>
+  <script src="./image-slot.js"></script>
+</helmet>
+<div style="--color-bg: var(--color-neutral-900); --color-surface: var(--color-neutral-800); --color-text: var(--color-neutral-100); --color-divider: rgba(245,234,216,0.14); --shadow-sm: 0 1px 3px rgba(0,0,0,0.4); --shadow-md: 0 8px 24px rgba(0,0,0,0.45); --shadow-lg: 0 24px 60px rgba(0,0,0,0.55); background: var(--color-bg); color: var(--color-text); min-height: 100vh;">
+
+  <div class="nav" style="position:sticky;top:0;z-index:30;background:color-mix(in srgb, var(--color-neutral-900) 90%, transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--color-divider);padding:var(--space-3) var(--space-6);">
+    <div class="nav-brand" style="display:flex;align-items:center;gap:8px;">
+      <span style="width:10px;height:10px;border-radius:50%;background:var(--color-accent);display:inline-block;"></span>
+      just one more ep<span style="color:var(--color-accent)">.</span>
+    </div>
+    <a href="#" onClick="{{ goDashboard }}" style="{{ navShowsStyle }}">Séries</a>
+    <a href="#" onClick="{{ goUpcoming }}" style="{{ navUpcomingStyle }}">À venir</a>
+    <a href="#" onClick="{{ goSearch }}" style="{{ navSearchStyle }}display:flex;align-items:center;gap:4px;">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+      Ajouter
+    </a>
+  </div>
+
+  <sc-if value="{{ isDashboard }}" hint-placeholder-val="{{ true }}">
+  <div data-screen-label="Dashboard" style="max-width:1100px;margin:0 auto;padding:var(--space-6) var(--space-6) var(--space-8);">
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;flex-wrap:wrap;gap:var(--space-3);margin-bottom:var(--space-5);">
+      <div>
+        <h1 style="margin-bottom:4px;">Reprendre</h1>
+        <p class="text-muted" style="margin:0;">5 séries suivies</p>
+      </div>
+      <div class="seg">
+        <label class="seg-opt"><input type="radio" name="sort" checked="{{ isSortActivity }}" onChange="{{ setSortActivity }}"/>Dernière activité</label>
+        <label class="seg-opt"><input type="radio" name="sort" checked="{{ isSortStatus }}" onChange="{{ setSortStatus }}"/>Statut</label>
+      </div>
+    </div>
+
+    <sc-for list="{{ dashboardShows }}" as="show" hint-placeholder-count="5">
+      <div class="card elev-sm" onClick="{{ show.openShow }}" style="flex-direction:row;align-items:stretch;gap:var(--space-4);padding:var(--space-3);cursor:pointer;background:var(--color-surface);margin-bottom:var(--space-3);">
+        <image-slot id="poster-{{ show.id }}" shape="rounded" radius="12" style="width:96px;height:144px;flex:none;" placeholder="Poster"></image-slot>
+        <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;justify-content:center;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <h3 style="margin:0;font-size:19px;">{{ show.title }}</h3>
+            <span class="text-muted" style="font-size:13px;">{{ show.year }}</span>
+            <span class="tag {{ show.statusTagClass }}">{{ show.statusLabel }}</span>
+          </div>
+          <sc-if value="{{ isShowGenreTags }}" hint-placeholder-val="{{ true }}">
+            <div style="display:flex;align-items:center;gap:6px;">
+              <sc-for list="{{ show.genres }}" as="g" hint-placeholder-count="2"><span class="tag tag-outline" style="white-space:nowrap;flex:none;">{{ g }}</span></sc-for>
+            </div>
+          </sc-if>
+          <div>
+            <div style="font-size:14px;margin-bottom:6px;">{{ show.seasonEpisodeLabel }}</div>
+            <div style="height:6px;border-radius:999px;background:var(--color-neutral-700);overflow:hidden;">
+              <div style="height:100%;border-radius:999px;{{ show.fillStyle }}"></div>
+            </div>
+          </div>
+          <span class="text-muted" style="font-size:12px;">{{ show.activityLabel }}</span>
+        </div>
+        <div style="display:flex;align-items:center;">
+          <sc-if value="{{ show.quickAction }}" hint-placeholder-val="{{ true }}">
+            <sc-if value="{{ isQuickActionButton }}" hint-placeholder-val="{{ true }}">
+              <button class="btn btn-primary" onClick="{{ show.quickAction }}" style="white-space:nowrap;">Épisode suivant vu</button>
+            </sc-if>
+            <sc-if value="{{ isQuickActionCheckbox }}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{ show.quickAction }}" aria-label="Marquer l'épisode suivant vu" style="width:38px;height:38px;border-radius:50%;border:1.5px solid var(--color-neutral-600);background:transparent;cursor:pointer;color:var(--color-text);">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 3 20 12 6 21 6 3"></polygon></svg>
+              </button>
+            </sc-if>
+          </sc-if>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isShow }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Fiche série" style="max-width:1100px;margin:0 auto;padding:var(--space-4) var(--space-6) var(--space-8);">
+    <button class="btn btn-ghost" onClick="{{ goDashboard }}" style="margin-bottom:var(--space-4);display:inline-flex;align-items:center;gap:4px;">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+      Retour
+    </button>
+    <div style="position:relative;height:340px;margin-bottom:70px;">
+      <div style="position:absolute;inset:0;border-radius:var(--radius-lg);overflow:hidden;">
+        <image-slot id="backdrop-{{ currentShow.id }}" shape="rect" placeholder="Image de fond" style="width:100%;height:100%;" class="washed"></image-slot>
+        <div style="position:absolute;inset:0;background:linear-gradient(to top, var(--color-bg) 8%, transparent 65%);pointer-events:none;"></div>
+      </div>
+      <div style="position:absolute;left:var(--space-6);bottom:-64px;display:flex;align-items:flex-end;gap:var(--space-4);">
+        <image-slot id="poster-{{ currentShow.id }}" shape="rounded" radius="16" style="width:140px;height:210px;box-shadow:var(--shadow-lg);flex:none;" placeholder="Poster"></image-slot>
+        <div style="padding-bottom:8px;">
+          <h1 style="margin-bottom:6px;">{{ currentShow.title }}</h1>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <span class="text-muted">{{ currentShow.year }}</span>
+            <span class="tag {{ currentShow.statusTagClass }}">{{ currentShow.statusLabel }}</span>
+            <sc-for list="{{ currentShow.genres }}" as="g" hint-placeholder-count="2"><span class="tag tag-outline" style="white-space:nowrap;flex:none;">{{ g }}</span></sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:2px;margin-bottom:var(--space-6);">
+      <span class="text-muted" style="font-size:13px;margin-right:6px;">Ma note</span>
+      <sc-for list="{{ currentShow.ratingStars }}" as="star" hint-placeholder-count="5">
+        <button onClick="{{ star.setRating }}" aria-label="Noter" style="background:none;border:none;padding:2px;cursor:pointer;">
+          <svg width="22" height="22" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.25" stroke-linecap="round" stroke-linejoin="round" fill="{{ star.fillColor }}" style="color:{{ star.strokeColor }}"><polygon points="12 2.5 15.1 8.9 22 9.9 17 14.9 18.2 21.9 12 18.5 5.8 21.9 7 14.9 2 9.9 8.9 8.9 12 2.5"></polygon></svg>
+        </button>
+      </sc-for>
+    </div>
+
+    <sc-for list="{{ currentShow.seasons }}" as="season" hint-placeholder-count="2">
+      <div style="margin-bottom:var(--space-6);">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:var(--space-3);margin-bottom:var(--space-3);flex-wrap:wrap;">
+          <div style="display:flex;align-items:baseline;gap:10px;">
+            <h3 style="margin:0;">Saison {{ season.number }}</h3>
+            <span class="text-muted" style="font-size:13px;">{{ season.watchedCount }}/{{ season.total }} épisodes</span>
+          </div>
+          <button class="btn btn-secondary" onClick="{{ season.toggleAll }}">{{ season.toggleLabel }}</button>
+        </div>
+        <div style="height:6px;border-radius:999px;background:var(--color-neutral-700);overflow:hidden;margin-bottom:var(--space-4);">
+          <div style="height:100%;border-radius:999px;{{ season.progressStyle }}"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:10px;">
+          <sc-for list="{{ season.episodes }}" as="ep" hint-placeholder-count="10">
+            <button onClick="{{ ep.toggle }}" aria-label="Marquer l'épisode" style="width:100%;aspect-ratio:1;border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#fff;font-size:13px;font-family:var(--font-heading);{{ ep.style }}">
+              <sc-if value="{{ ep.watched }}" hint-placeholder-val="{{ false }}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.75" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              </sc-if>
+              <sc-if value="{{ ep.unwatched }}" hint-placeholder-val="{{ true }}">
+                <span style="color:var(--color-neutral-300);">{{ ep.number }}</span>
+              </sc-if>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isSearch }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="Ajouter une série" style="max-width:900px;margin:0 auto;padding:var(--space-6);">
+    <h1 style="margin-bottom:4px;">Ajouter une série</h1>
+    <p class="text-muted" style="margin-bottom:var(--space-5);">Cherchez une série et ajoutez-la à votre suivi</p>
+    <input class="input" type="text" placeholder="Rechercher une série…" value="{{ query }}" onChange="{{ onQueryChange }}" style="margin-bottom:var(--space-5);max-width:420px;"/>
+    <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+      <sc-for list="{{ searchResults }}" as="r" hint-placeholder-count="3">
+        <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:var(--space-4);margin-bottom:var(--space-3);background:var(--color-surface);">
+          <image-slot id="poster-{{ r.id }}" shape="rounded" radius="10" style="width:64px;height:96px;flex:none;" placeholder="Poster"></image-slot>
+          <div style="flex:1;">
+            <h3 style="margin:0 0 2px;">{{ r.title }}</h3>
+            <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+              <span class="text-muted" style="font-size:13px;">{{ r.year }}</span>
+              <sc-for list="{{ r.genres }}" as="g" hint-placeholder-count="1"><span class="tag tag-outline" style="white-space:nowrap;flex:none;">{{ g }}</span></sc-for>
+            </div>
+          </div>
+          <button class="btn btn-primary" onClick="{{ r.add }}">Ajouter à ma liste</button>
+        </div>
+      </sc-for>
+    </sc-if>
+    <sc-if value="{{ hasNoResults }}" hint-placeholder-val="{{ false }}">
+      <p class="text-muted">Aucun résultat pour cette recherche.</p>
+    </sc-if>
+    <sc-if value="{{ catalogEmpty }}" hint-placeholder-val="{{ false }}">
+      <p class="text-muted">Toutes les séries suggérées sont déjà dans votre liste.</p>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isUpcoming }}" hint-placeholder-val="{{ false }}">
+  <div data-screen-label="À venir" style="max-width:900px;margin:0 auto;padding:var(--space-6);">
+    <h1 style="margin-bottom:4px;">À venir</h1>
+    <p class="text-muted" style="margin-bottom:var(--space-6);">Prochaines sorties de vos séries suivies</p>
+    <sc-for list="{{ upcomingList }}" as="u" hint-placeholder-count="3">
+      <div class="card elev-sm" style="flex-direction:row;align-items:center;gap:var(--space-4);margin-bottom:var(--space-3);cursor:pointer;background:var(--color-surface);" onClick="{{ u.openShow }}">
+        <image-slot id="poster-{{ u.showId }}" shape="rounded" radius="10" style="width:64px;height:96px;flex:none;" placeholder="Poster"></image-slot>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">
+            <span class="tag tag-accent-2">{{ u.dateLabel }}</span>
+            <span class="text-muted" style="font-size:12px;">{{ u.countdown }}</span>
+          </div>
+          <h3 style="margin:0 0 2px;">{{ u.showTitle }}</h3>
+          <span class="text-muted" style="font-size:13px;">{{ u.label }}</span>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{
+  &quot;$preview&quot;: {&quot;width&quot;: 1440, &quot;height&quot;: 960},
+  &quot;sortDefault&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;activity&quot;, &quot;options&quot;: [&quot;activity&quot;, &quot;status&quot;], &quot;tsType&quot;: &quot;'activity'|'status'&quot;},
+  &quot;showGenreTags&quot;: {&quot;editor&quot;: &quot;boolean&quot;, &quot;default&quot;: true, &quot;tsType&quot;: &quot;boolean&quot;},
+  &quot;quickActionStyle&quot;: {&quot;editor&quot;: &quot;enum&quot;, &quot;default&quot;: &quot;button&quot;, &quot;options&quot;: [&quot;button&quot;, &quot;checkbox&quot;], &quot;tsType&quot;: &quot;'button'|'checkbox'&quot;}
+}">
+class Component extends DCLogic {
+  state = {
+    page: 'dashboard',
+    sortBy: null,
+    selectedShowId: null,
+    shows: [
+      { id: 'breaking-bad', title: 'Breaking Bad', year: 2008, genres: ['Drame', 'Thriller'], status: 'cours', rating: 5, activityRank: 1, activityLabel: 'Hier',
+        seasons: [
+          { number: 1, episodes: Array(7).fill(true) },
+          { number: 2, episodes: Array(13).fill(true) },
+          { number: 3, episodes: [true, true, true, true, true, false, false, false, false, false, false, false, false] },
+        ] },
+      { id: 'the-bear', title: 'The Bear', year: 2022, genres: ['Comédie dramatique'], status: 'cours', rating: 4, activityRank: 0, activityLabel: "Aujourd'hui",
+        seasons: [
+          { number: 1, episodes: Array(8).fill(true) },
+          { number: 2, episodes: Array(10).fill(true) },
+          { number: 3, episodes: [true, true, true, false, false, false, false, false, false, false] },
+        ] },
+      { id: 'severance', title: 'Severance', year: 2022, genres: ['Science-fiction'], status: 'pause', rating: 5, activityRank: 2, activityLabel: 'Il y a 3 jours',
+        seasons: [
+          { number: 1, episodes: Array(9).fill(true) },
+          { number: 2, episodes: [true, true, true, true, true, true, false, false, false, false] },
+        ] },
+      { id: 'fargo', title: 'Fargo', year: 2014, genres: ['Anthologie', 'Policier'], status: 'termine', rating: 4, activityRank: 4, activityLabel: 'Il y a 3 semaines',
+        seasons: [
+          { number: 5, episodes: Array(10).fill(true) },
+        ] },
+      { id: 'shogun', title: 'Shōgun', year: 2024, genres: ['Drame historique'], status: 'cours', rating: 5, activityRank: 3, activityLabel: 'Il y a 5 jours',
+        seasons: [
+          { number: 1, episodes: [true, true, true, true, true, true, true, true, false, false] },
+        ] },
+    ],
+    upcoming: [
+      { showId: 'the-bear', label: 'Saison 4', dateISO: '2026-08-18', dateLabel: '18 août 2026' },
+      { showId: 'severance', label: 'Saison 3', dateISO: '2026-09-12', dateLabel: '12 septembre 2026' },
+      { showId: 'shogun', label: 'Saison 2', dateISO: '2026-10-03', dateLabel: '3 octobre 2026' },
+    ],
+    query: '',
+    catalog: [
+      { id: 'stranger-things', title: 'Stranger Things', year: 2016, genres: ['Fantastique', 'Horreur'], seasons: [{ number: 1, episodes: Array(8).fill(false) }] },
+      { id: 'succession', title: 'Succession', year: 2018, genres: ['Drame'], seasons: [{ number: 1, episodes: Array(9).fill(false) }] },
+      { id: 'true-detective', title: 'True Detective', year: 2014, genres: ['Policier', 'Thriller'], seasons: [{ number: 1, episodes: Array(8).fill(false) }] },
+      { id: 'the-crown', title: 'The Crown', year: 2016, genres: ['Drame historique'], seasons: [{ number: 1, episodes: Array(10).fill(false) }] },
+    ],
+  };
+
+  STATUS_META = {
+    cours: { label: 'En cours', tagClass: 'tag-accent', fillVar: 'var(--color-accent)' },
+    pause: { label: 'En pause', tagClass: 'tag-accent-2', fillVar: 'var(--color-accent-2)' },
+    termine: { label: 'Terminé', tagClass: 'tag-neutral', fillVar: 'var(--color-neutral-500)' },
+  };
+  STATUS_RANK = { cours: 0, pause: 1, termine: 2 };
+
+  goDashboard = () => this.setState({ page: 'dashboard', selectedShowId: null });
+  goUpcoming = () => this.setState({ page: 'upcoming', selectedShowId: null });
+  goSearch = () => this.setState({ page: 'search', selectedShowId: null });
+  openShow = (id) => this.setState({ page: 'show', selectedShowId: id });
+  setSort = (v) => this.setState({ sortBy: v });
+  setQuery = (v) => this.setState({ query: v });
+
+  addFromCatalog = (id) => {
+    this.setState(s => {
+      const item = s.catalog.find(c => c.id === id);
+      if (!item) return null;
+      return {
+        catalog: s.catalog.filter(c => c.id !== id),
+        shows: [...s.shows, { ...item, status: 'cours', rating: 0, activityRank: -1, activityLabel: "À l'instant" }],
+      };
+    });
+  };
+
+  setRating = (showId, value) => {
+    this.setState(s => ({ shows: s.shows.map(sh => sh.id === showId ? { ...sh, rating: value } : sh) }));
+  };
+
+  toggleEpisode = (showId, seasonNumber, epIndex) => {
+    this.setState(s => ({
+      shows: s.shows.map(sh => sh.id !== showId ? sh : {
+        ...sh,
+        seasons: sh.seasons.map(se => {
+          if (se.number !== seasonNumber) return se;
+          const episodes = se.episodes.slice();
+          episodes[epIndex] = !episodes[epIndex];
+          return { ...se, episodes };
+        }),
+      }),
+    }));
+  };
+
+  toggleSeason = (showId, seasonNumber) => {
+    this.setState(s => ({
+      shows: s.shows.map(sh => sh.id !== showId ? sh : {
+        ...sh,
+        seasons: sh.seasons.map(se => {
+          if (se.number !== seasonNumber) return se;
+          const allWatched = se.episodes.every(Boolean);
+          return { ...se, episodes: se.episodes.map(() => !allWatched) };
+        }),
+      }),
+    }));
+  };
+
+  markNextEpisode = (showId, e) => {
+    if (e) e.stopPropagation();
+    this.setState(s => ({
+      shows: s.shows.map(sh => {
+        if (sh.id !== showId) return sh;
+        for (const se of sh.seasons) {
+          const idx = se.episodes.indexOf(false);
+          if (idx !== -1) {
+            const episodes = se.episodes.slice();
+            episodes[idx] = true;
+            return { ...sh, seasons: sh.seasons.map(s2 => s2.number === se.number ? { ...se, episodes } : s2) };
+          }
+        }
+        return sh;
+      }),
+    }));
+  };
+
+  summarize(show) {
+    const meta = this.STATUS_META[show.status];
+    let totalEp = 0, watchedEp = 0, nextSeason = null, nextIndex = -1;
+    show.seasons.forEach(se => {
+      totalEp += se.episodes.length;
+      watchedEp += se.episodes.filter(Boolean).length;
+      if (nextSeason === null) {
+        const idx = se.episodes.indexOf(false);
+        if (idx !== -1) { nextSeason = se; nextIndex = idx; }
+      }
+    });
+    const completed = nextSeason === null;
+    const lastSeason = show.seasons[show.seasons.length - 1];
+    const seasonWatched = completed ? lastSeason.episodes.filter(Boolean).length : nextSeason.episodes.filter(Boolean).length;
+    const seasonTotal = completed ? lastSeason.episodes.length : nextSeason.episodes.length;
+    const seasonNumber = completed ? lastSeason.number : nextSeason.number;
+    const episodeOrdinal = completed ? seasonTotal : nextIndex + 1;
+    return {
+      id: show.id, title: show.title, year: show.year, genres: show.genres,
+      statusLabel: meta.label, statusTagClass: meta.tagClass,
+      fillStyle: 'width:' + Math.round((watchedEp / totalEp) * 100) + '%;background:' + meta.fillVar,
+      seasonEpisodeLabel: 'Saison ' + seasonNumber + ' · Épisode ' + episodeOrdinal + '/' + seasonTotal,
+      activityLabel: show.activityLabel, activityRank: show.activityRank, statusRank: this.STATUS_RANK[show.status],
+      quickAction: completed ? null : (e) => this.markNextEpisode(show.id, e),
+      openShow: () => this.openShow(show.id),
+    };
+  }
+
+  detailFor(show) {
+    const meta = this.STATUS_META[show.status];
+    const seasons = show.seasons.map(se => {
+      const watchedCount = se.episodes.filter(Boolean).length;
+      const allWatched = watchedCount === se.episodes.length;
+      return {
+        number: se.number, watchedCount, total: se.episodes.length,
+        progressStyle: 'width:' + Math.round((watchedCount / se.episodes.length) * 100) + '%;background:' + meta.fillVar,
+        toggleLabel: allWatched ? 'Tout décocher' : 'Tout marquer vu',
+        toggleAll: () => this.toggleSeason(show.id, se.number),
+        episodes: se.episodes.map((w, i) => ({
+          number: i + 1, watched: w, unwatched: !w,
+          toggle: () => this.toggleEpisode(show.id, se.number, i),
+          style: w ? 'background:var(--color-accent);border:none;' : 'background:transparent;border:1.5px solid var(--color-neutral-600);',
+        })),
+      };
+    });
+    return {
+      id: show.id, title: show.title, year: show.year, genres: show.genres,
+      statusLabel: meta.label, statusTagClass: meta.tagClass,
+      ratingStars: [1, 2, 3, 4, 5].map(n => ({
+        setRating: () => this.setRating(show.id, n),
+        fillColor: n <= show.rating ? 'var(--color-accent-300)' : 'none',
+        strokeColor: n <= show.rating ? 'var(--color-accent-300)' : 'var(--color-neutral-600)',
+      })),
+      seasons,
+    };
+  }
+
+  renderVals() {
+    const effectiveSort = this.state.sortBy ?? (this.props.sortDefault ?? 'activity');
+    const shows = this.state.shows.map(s => this.summarize(s));
+    const sorted = shows.slice().sort((a, b) => effectiveSort === 'activity' ? a.activityRank - b.activityRank : a.statusRank - b.statusRank);
+    const selected = this.state.shows.find(s => s.id === this.state.selectedShowId);
+    const today = new Date('2026-08-01');
+    const upcoming = this.state.upcoming.map(u => {
+      const show = this.state.shows.find(s => s.id === u.showId);
+      const days = Math.round((new Date(u.dateISO) - today) / 86400000);
+      return { ...u, showTitle: show ? show.title : '', countdown: days <= 0 ? "Aujourd'hui" : ('Dans ' + days + ' jour' + (days > 1 ? 's' : '')), openShow: () => this.openShow(u.showId) };
+    }).sort((a, b) => new Date(a.dateISO) - new Date(b.dateISO));
+
+    const quickActionMode = this.props.quickActionStyle ?? 'button';
+    const query = this.state.query.trim().toLowerCase();
+    const searchResults = this.state.catalog
+      .filter(c => c.title.toLowerCase().includes(query))
+      .map(c => ({ id: c.id, title: c.title, year: c.year, genres: c.genres, add: () => this.addFromCatalog(c.id) }));
+
+    return {
+      isDashboard: this.state.page === 'dashboard',
+      isShow: this.state.page === 'show' && !!selected,
+      isUpcoming: this.state.page === 'upcoming',
+      isSearch: this.state.page === 'search',
+      query: this.state.query,
+      onQueryChange: (e) => this.setQuery(e.target.value),
+      searchResults,
+      hasResults: searchResults.length > 0,
+      hasNoResults: searchResults.length === 0 && this.state.catalog.length > 0,
+      catalogEmpty: this.state.catalog.length === 0,
+      goSearch: this.goSearch,
+      navSearchStyle: 'color:' + (this.state.page === 'search' ? 'var(--color-accent)' : 'inherit'),
+      isSortActivity: effectiveSort === 'activity',
+      isSortStatus: effectiveSort === 'status',
+      setSortActivity: () => this.setSort('activity'),
+      setSortStatus: () => this.setSort('status'),
+      isShowGenreTags: this.props.showGenreTags ?? true,
+      isQuickActionButton: quickActionMode === 'button',
+      isQuickActionCheckbox: quickActionMode === 'checkbox',
+      dashboardShows: sorted,
+      currentShow: selected ? this.detailFor(selected) : null,
+      upcomingList: upcoming,
+      goDashboard: this.goDashboard,
+      goUpcoming: this.goUpcoming,
+      navShowsStyle: 'color:' + (this.state.page === 'dashboard' || this.state.page === 'show' ? 'var(--color-accent)' : 'inherit'),
+      navUpcomingStyle: 'color:' + (this.state.page === 'upcoming' ? 'var(--color-accent)' : 'inherit'),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
