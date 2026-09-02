@@ -1,0 +1,123 @@
+// Prisma schema — learn more at https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Auth (Credentials — email/password, no OAuth) ──────────────────────────
+
+model User {
+  id       String  @id @default(cuid())
+  name     String?
+  email    String  @unique
+  password String // bcrypt hash, never plaintext
+  image    String?
+
+  watchProgress WatchProgress[]
+  follows       UserShow[]
+
+  createdAt DateTime @default(now())
+}
+
+// ─── Domain: shows, episodes, per-user tracking ─────────────────────────────
+
+enum ShowStatus {
+  WATCHING
+  PAUSED
+  COMPLETED
+}
+
+// Local cache of a TMDB show, shared across all users — never duplicated
+// per-user, so two users following "Severance" reuse the same row and the
+// same fetched episode list.
+model Show {
+  id           String   @id @default(cuid())
+  tmdbId       Int      @unique
+  title        String
+  overview     String?
+  posterPath   String?
+  backdropPath String?
+  firstAirDate DateTime?
+  genres       String[]
+
+  seasons       Season[]
+  episodes      Episode[]
+  watchProgress WatchProgress[]
+  followedBy    UserShow[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Season {
+  id           String  @id @default(cuid())
+  showId       String
+  show         Show    @relation(fields: [showId], references: [id], onDelete: Cascade)
+  seasonNumber Int
+  name         String?
+  overview     String?
+  posterPath   String?
+  airDate      DateTime?
+
+  episodes Episode[]
+
+  @@unique([showId, seasonNumber])
+}
+
+model Episode {
+  id            String  @id @default(cuid())
+  tmdbId        Int     @unique
+  showId        String
+  show          Show    @relation(fields: [showId], references: [id], onDelete: Cascade)
+  seasonId      String
+  season        Season  @relation(fields: [seasonId], references: [id], onDelete: Cascade)
+  seasonNumber  Int
+  episodeNumber Int
+  name          String?
+  overview      String?
+  stillPath     String?
+  airDate       DateTime?
+
+  watchProgress WatchProgress[]
+
+  @@unique([showId, seasonNumber, episodeNumber])
+}
+
+// A user's relationship to a show: are they following it, what's their
+// status/rating. Separate from WatchProgress because it holds subjective,
+// per-show state that can't be derived from which episodes are watched
+// (e.g. "paused" or a star rating).
+model UserShow {
+  id       String     @id @default(cuid())
+  userId   String
+  user     User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  showId   String
+  show     Show       @relation(fields: [showId], references: [id], onDelete: Cascade)
+  status   ShowStatus @default(WATCHING)
+  rating   Int? // 1-5, set by the user
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, showId])
+}
+
+// One row per episode a user has marked as watched.
+model WatchProgress {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  showId    String
+  show      Show     @relation(fields: [showId], references: [id], onDelete: Cascade)
+  episodeId String
+  episode   Episode  @relation(fields: [episodeId], references: [id], onDelete: Cascade)
+  watchedAt DateTime @default(now())
+
+  @@unique([userId, episodeId])
+}

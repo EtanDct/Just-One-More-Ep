@@ -1,0 +1,220 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design tokens ported from design-export/ (maquette "Organic").
+ * Single dark theme for v1 — :root and .dark hold identical values so the
+ * app looks correct whether or not something toggles the `dark` class later.
+ */
+:root,
+.dark {
+  /* — shadcn semantic tokens, recolored from the maquette's dark palette — */
+  --background: #2e2b25; /* neutral-900 */
+  --foreground: #f9f4ed; /* neutral-100 */
+  --card: #474238; /* neutral-800 ("surface" in the maquette) */
+  --card-foreground: #f9f4ed;
+  --popover: #474238;
+  --popover-foreground: #f9f4ed;
+  --primary: #c67139; /* the maquette's --color-accent */
+  --primary-foreground: #2e2b25;
+  --secondary: #645c50; /* neutral-700 */
+  --secondary-foreground: #f9f4ed;
+  --muted: #474238;
+  --muted-foreground: #c0b6a5; /* neutral-400 */
+  --accent: #645c50; /* shadcn's hover-surface accent, distinct from brand color below */
+  --accent-foreground: #f9f4ed;
+  --destructive: #c4453a;
+  --destructive-foreground: #f9f4ed;
+  --border: rgba(245, 234, 216, 0.14); /* the maquette's --color-divider */
+  --input: rgba(245, 234, 216, 0.14);
+  --ring: #c67139;
+  --radius: 20px;
+
+  /* — brand ramp: the maquette's orange --color-accent, used for CTAs, focus rings, "en cours" status — */
+  --brand: #c67139;
+  --brand-100: #fff2eb;
+  --brand-200: #ffe1d0;
+  --brand-300: #ffc6a5;
+  --brand-400: #f6a06b;
+  --brand-500: #d67f48;
+  --brand-600: #b2622d;
+  --brand-700: #8c491a;
+  --brand-800: #643312;
+  --brand-900: #402310;
+
+  /* — brand2 ramp: the maquette's olive --color-accent-2, used for "en pause" status and upcoming dates — */
+  --brand2: #7a8a5e;
+  --brand2-100: #f0fae1;
+  --brand2-200: #e1eecc;
+  --brand2-300: #ccdbb2;
+  --brand2-400: #aebf92;
+  --brand2-500: #8fa073;
+  --brand2-600: #728157;
+  --brand2-700: #56633f;
+  --brand2-800: #3d472b;
+  --brand2-900: #272e1b;
+
+  /* — warm neutral ramp, replaces Tailwind's default cool-gray neutral scale — */
+  --neutral-100: #f9f4ed;
+  --neutral-200: #eee7db;
+  --neutral-300: #dcd3c4;
+  --neutral-400: #c0b6a5;
+  --neutral-500: #a19786;
+  --neutral-600: #82796a;
+  --neutral-700: #645c50;
+  --neutral-800: #474238;
+  --neutral-900: #2e2b25;
+  --neutral-950: #201e1d;
+
+  /* — elevation, tuned for the dark surface (ink-black shadows) — */
+  --shadow-elev-sm: 0 1px 3px rgba(0, 0, 0, 0.4);
+  --shadow-elev-md: 0 8px 24px rgba(0, 0, 0, 0.45);
+  --shadow-elev-lg: 0 24px 60px rgba(0, 0, 0, 0.55);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-100: var(--brand-100);
+  --color-brand-200: var(--brand-200);
+  --color-brand-300: var(--brand-300);
+  --color-brand-400: var(--brand-400);
+  --color-brand-500: var(--brand-500);
+  --color-brand-600: var(--brand-600);
+  --color-brand-700: var(--brand-700);
+  --color-brand-800: var(--brand-800);
+  --color-brand-900: var(--brand-900);
+
+  --color-brand2: var(--brand2);
+  --color-brand2-100: var(--brand2-100);
+  --color-brand2-200: var(--brand2-200);
+  --color-brand2-300: var(--brand2-300);
+  --color-brand2-400: var(--brand2-400);
+  --color-brand2-500: var(--brand2-500);
+  --color-brand2-600: var(--brand2-600);
+  --color-brand2-700: var(--brand2-700);
+  --color-brand2-800: var(--brand2-800);
+  --color-brand2-900: var(--brand2-900);
+
+  --color-neutral-100: var(--neutral-100);
+  --color-neutral-200: var(--neutral-200);
+  --color-neutral-300: var(--neutral-300);
+  --color-neutral-400: var(--neutral-400);
+  --color-neutral-500: var(--neutral-500);
+  --color-neutral-600: var(--neutral-600);
+  --color-neutral-700: var(--neutral-700);
+  --color-neutral-800: var(--neutral-800);
+  --color-neutral-900: var(--neutral-900);
+  --color-neutral-950: var(--neutral-950);
+
+  --font-sans: var(--font-body);
+  --font-body: var(--font-body);
+  --font-heading: var(--font-heading);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-card: calc(var(--radius) * 1.6);
+
+  --shadow-elev-sm: var(--shadow-elev-sm);
+  --shadow-elev-md: var(--shadow-elev-md);
+  --shadow-elev-lg: var(--shadow-elev-lg);
+
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+}
+
+:root {
+  --sidebar: #474238;
+  --sidebar-foreground: #f9f4ed;
+  --sidebar-primary: #c67139;
+  --sidebar-primary-foreground: #2e2b25;
+  --sidebar-accent: #645c50;
+  --sidebar-accent-foreground: #f9f4ed;
+  --sidebar-border: rgba(245, 234, 216, 0.14);
+  --sidebar-ring: #c67139;
+  --chart-1: #c67139;
+  --chart-2: #7a8a5e;
+  --chart-3: #a19786;
+  --chart-4: #dcd3c4;
+  --chart-5: #645c50;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-body;
+  }
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    @apply font-heading font-normal;
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+  }
+  h1 {
+    font-size: 42px;
+  }
+  h2 {
+    font-size: 32px;
+  }
+  h3 {
+    font-size: 25px;
+  }
+  h4 {
+    font-size: 20px;
+  }
+  h5 {
+    font-size: 16px;
+  }
+  h6 {
+    font-size: 13px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+}
