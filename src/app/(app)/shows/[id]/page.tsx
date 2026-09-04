@@ -1,14 +1,17 @@
 import Link from "next/link";
 import Image from "next/image";
 import { notFound, redirect } from "next/navigation";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Trash2 } from "lucide-react";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { tmdbImageUrl } from "@/lib/tmdb-image";
 import { StatusBadge, GenreTag } from "@/components/status-badge";
 import { PosterPlaceholder } from "@/components/poster-placeholder";
+import { Button } from "@/components/ui/button";
 import { RatingStars } from "./rating-stars";
 import { SeasonBlock } from "./season-block";
+import { RefreshButton } from "./refresh-button";
+import { removeShowAction } from "./actions";
 
 export default async function ShowPage({
   params,
@@ -61,13 +64,28 @@ export default async function ShowPage({
 
   return (
     <div>
-      <Link
-        href="/dashboard"
-        className="mb-4 inline-flex items-center gap-1 text-sm text-primary"
-      >
-        <ArrowLeft className="size-4" />
-        Retour
-      </Link>
+      <div className="mb-4 flex items-center justify-between">
+        <Link
+          href="/dashboard"
+          className="inline-flex items-center gap-1 text-sm text-primary"
+        >
+          <ArrowLeft className="size-4" />
+          Retour
+        </Link>
+        <div className="flex items-center gap-1">
+          <RefreshButton showId={show.id} />
+          <form action={removeShowAction.bind(null, show.id)}>
+            <Button
+              type="submit"
+              variant="ghost"
+              className="text-sm text-destructive hover:text-destructive"
+            >
+              <Trash2 className="size-4" />
+              Retirer de ma liste
+            </Button>
+          </form>
+        </div>
+      </div>
 
       <div className="relative mb-20 h-72">
         <div className="absolute inset-0 overflow-hidden rounded-3xl bg-secondary">

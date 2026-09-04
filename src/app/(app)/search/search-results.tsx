@@ -1,11 +1,18 @@
 import Image from "next/image";
+import { Check } from "lucide-react";
 import type { TMDBShowSummary } from "@/lib/tmdb";
 import { tmdbImageUrl } from "@/lib/tmdb-image";
 import { addShowAction } from "./actions";
 import { PosterPlaceholder } from "@/components/poster-placeholder";
 import { Button } from "@/components/ui/button";
 
-export function SearchResults({ results }: { results: TMDBShowSummary[] }) {
+export function SearchResults({
+  results,
+  addedTmdbIds,
+}: {
+  results: TMDBShowSummary[];
+  addedTmdbIds: Set<number>;
+}) {
   return (
     <div className="flex flex-col gap-3">
       {results.map((result) => {
@@ -13,6 +20,7 @@ export function SearchResults({ results }: { results: TMDBShowSummary[] }) {
         const year = result.firstAirDate
           ? new Date(result.firstAirDate).getFullYear()
           : null;
+        const alreadyAdded = addedTmdbIds.has(result.id);
 
         return (
           <div
@@ -36,11 +44,18 @@ export function SearchResults({ results }: { results: TMDBShowSummary[] }) {
                 <span className="text-sm text-muted-foreground">{year}</span>
               )}
             </div>
-            <form action={addShowAction.bind(null, result.id)}>
-              <Button type="submit" className="rounded-full whitespace-nowrap">
-                Ajouter à ma liste
-              </Button>
-            </form>
+            {alreadyAdded ? (
+              <span className="inline-flex items-center gap-1.5 whitespace-nowrap rounded-full bg-secondary px-4 py-2 text-sm text-secondary-foreground">
+                <Check className="size-4" />
+                Déjà dans ma liste
+              </span>
+            ) : (
+              <form action={addShowAction.bind(null, result.id)}>
+                <Button type="submit" className="rounded-full whitespace-nowrap">
+                  Ajouter à ma liste
+                </Button>
+              </form>
+            )}
           </div>
         );
       })}
